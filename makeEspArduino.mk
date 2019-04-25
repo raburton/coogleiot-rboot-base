@@ -310,10 +310,10 @@ ifneq ($(FLASH_INFO),)
 endif
 	perl -e 'print "Build complete. Elapsed time: ", time()-$(START_TIME),  " seconds\n\n"'
 
-upload flash: all
+upload flash: all $(FS_IMAGE)
 	#echo $(UPLOAD_COM)
-	echo $(ESPTOOL_PY) -fs 32m 0x0000 $(BOOT_LOADER) 0x2000 $(MAIN_EXE)
-	$(ESPTOOL_PY) write_flash -fs 32m 0x0000 $(BOOT_LOADER) 0x2000 $(MAIN_EXE)
+	echo $(ESPTOOL_PY) write_flash -fs 4MB 0x0000 $(BOOT_LOADER) 0x2000 $(MAIN_EXE)
+	$(ESPTOOL_PY) write_flash -fs 4MB 0x0000 $(BOOT_LOADER) 0x2000 $(MAIN_EXE) 0x100000 $(FS_IMAGE)
 	#$(ESPTOOL) -bz 4M -cd ck -cb $(UPLOAD_SPEED) -ca 0x00000 -cf $(BOOT_LOADER) -ca 0x2000 $(MAIN_EXE)"
 
 ota: all
@@ -325,12 +325,16 @@ http: all
 
 $(FS_IMAGE): $(ARDUINO_MK) $(wildcard $(FS_DIR)/*)
 	echo Generating filesystem image: $(FS_IMAGE)
-	$(MKSPIFFS_COM)
+	$(TOOLS_ROOT)/mkspiffs/mkspiffs -b 4096  -s 0xFC000 -c $(FS_DIR) $(FS_IMAGE)
 
 fs: $(FS_IMAGE)
 
+vars:
+	echo $(FS_UPLOAD_COM)
+	
 upload_fs flash_fs: $(FS_IMAGE)
-	$(FS_UPLOAD_COM)
+	echo "$(FS_UPLOAD_COM)"
+	#$(FS_UPLOAD_COM)
 
 ota_fs: $(FS_IMAGE)
 	$(OTA_TOOL) -r -i $(ESP_ADDR) -p $(ESP_PORT) -a $(ESP_PWD) -s -f $(FS_IMAGE)
