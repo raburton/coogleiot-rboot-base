@@ -249,7 +249,7 @@ LIBMAIN_SRC = $(SDK_ROOT)/lib/libmain.a
 LINKER_LIBS = hal phy pp net80211 lwip2-536-feat wpa crypto main2 wps bearssl axtls espnow smartconfig airkiss wpa2 stdc++ m c gcc
 LINKER_LIBS := $(addprefix -l, $(LINKER_LIBS))
 
-LINKER_CMD = $(TOOLS_ROOT)/xtensa-lx106-elf/bin/xtensa-lx106-elf-gcc -fno-exceptions -Wl,-Map -Wl,$(BUILD_DIR)/$(MAIN_NAME).map -g -w -Os -nostdlib -Wl,--no-check-sections -u app_entry -u _printf_float -u _scanf_float -Wl,-static -L$(BUILD_DIR) -L$(SDK_ROOT)/lib -L$(SDK_ROOT)/ld -L$(SDK_ROOT)/libc/xtensa-lx106-elf/lib -T$(MAIN_NAME).ld -Wl,--gc-sections -Wl,-wrap,system_restart_local -Wl,-wrap,spi_flash_read -o $(ELF_FILE) -Wl,--start-group $(BUILD_DIR)/arduino.ar $(LINKER_LIBS) $(BUILD_DIR)/$(MAIN_NAME)_.cpp.o $(BUILD_DIR)/buildinfo.c++.o $(BUILD_DIR)/arduino.ar  -Wl,--end-group
+LINKER_CMD = $(TOOLS_ROOT)/xtensa-lx106-elf/bin/xtensa-lx106-elf-gcc -fno-exceptions -Wl,-Map -Wl,$(BUILD_DIR)/$(MAIN_NAME).map -g -w -Os -nostdlib -Wl,--no-check-sections -u app_entry -u _printf_float -u _scanf_float -Wl,-static -L$(BUILD_DIR) -L$(SDK_ROOT)/lib -L$(SDK_ROOT)/ld -L$(SDK_ROOT)/libc/xtensa-lx106-elf/lib -T$(MAIN_NAME).ld -Wl,--gc-sections -Wl,-wrap,system_restart_local -Wl,-wrap,spi_flash_read -o $(ELF_FILE) -Wl,--start-group $(BUILD_DIR)/arduino.ar $(LINKER_LIBS) $(sort $(USER_OBJ)) $(BUILD_DIR)/buildinfo.c++.o $(BUILD_DIR)/arduino.ar  -Wl,--end-group
 ESPTOOL_PY ?= /usr/local/bin/esptool.py
 
 $(BUILD_INFO_H): | $(BUILD_DIR)
@@ -329,8 +329,6 @@ $(FS_IMAGE): $(ARDUINO_MK) $(wildcard $(FS_DIR)/*)
 
 fs: $(FS_IMAGE)
 
-vars:
-	echo $(FS_UPLOAD_COM)
 	
 upload_fs flash_fs: $(FS_IMAGE)
 	echo "$(FS_UPLOAD_COM)"
