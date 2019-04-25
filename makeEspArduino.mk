@@ -40,9 +40,12 @@ HTTP_URI ?= /update
 HTTP_PWD ?= user
 HTTP_USR ?= password
 
+PROJECT_DIRECTORY = $(shell pwd)
+PROJECT_BUILD_IDENTIFIER = $(shell basename $(PROJECT_DIRECTORY))
+
 # Output directory
-BUILD_ROOT ?= /tmp/mkESP
-BUILD_DIR ?= $(BUILD_ROOT)/$(MAIN_NAME)_$(BOARD)
+BUILD_ROOT ?= $(PROJECT_DIRECTORY)/build
+BUILD_DIR ?= $(BUILD_ROOT)/$(BOARD)
 
 # File system source directory
 FS_DIR ?= $(dir $(SKETCH))data
