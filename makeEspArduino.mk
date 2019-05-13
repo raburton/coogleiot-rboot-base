@@ -172,6 +172,7 @@ ifeq ($(LIBS),)
   # Automatically find directories with header files used by the sketch
   LIBS := $(shell perl -e 'use File::Find;@d = split(" ", shift);while (<>) {$$f{"$$1"} = 1 if /^\s*\#include\s+[<"]([^>"]+)/;}find(sub {if ($$f{$$_}){print $$File::Find::dir," ";$$f{$$_}=0;}}, @d);' \
                           "$(CUSTOM_LIBS) $(ESP_LIBS) $(ARDUINO_LIBS)" $(SKETCH) $(call find_files,S|c|cpp,$(SKETCH_DIR)))
+
   ifneq ($(findstring /examples/,$(realpath $(SKETCH))),)
     # Assume library example sketch, add the library directory unless it is an Arduino basic example
     EX_LIB := $(shell perl -e 'print $$ARGV[0] if $$ARGV[0] =~ s/\/examples\/(?!\d\d\.).+//' $(realpath $(SKETCH)))
@@ -319,6 +320,11 @@ upload flash: all $(FS_IMAGE)
 	$(ESPTOOL_PY) write_flash -fs 4MB 0x0000 $(BOOT_LOADER) 0x2000 $(MAIN_EXE) 0x100000 $(FS_IMAGE)
 	#$(ESPTOOL) -bz 4M -cd ck -cb $(UPLOAD_SPEED) -ca 0x00000 -cf $(BOOT_LOADER) -ca 0x2000 $(MAIN_EXE)"
 
+vars: 
+	echo "ARDUINO_LIBS: $(ARDUINO_LIBS)"
+	echo "$(CUSTOM_LIBS) $(ESP_LIBS) $(ARDUINO_LIBS)" 
+	echo "LIBS: $(LIBS)"
+	
 ota: all
 	$(OTA_TOOL) -r -i $(ESP_ADDR) -p $(ESP_PORT) -a $(ESP_PWD) -f $(MAIN_EXE)
 
