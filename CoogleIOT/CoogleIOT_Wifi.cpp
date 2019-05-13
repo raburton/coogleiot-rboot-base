@@ -154,7 +154,7 @@ bool CoogleIOT_Wifi::connect()
 	return true;
 }
 
-extern "C" void __***REMOVED***iot_wifi_connect_timer_callback(void *self)
+extern "C" void __coogleiot_wifi_connect_timer_callback(void *self)
 {
 	CoogleIOT_Wifi *obj = static_cast<CoogleIOT_Wifi *>(self);
 	obj->wifiConnectTimerTick = true;
@@ -200,7 +200,7 @@ bool CoogleIOT_Wifi::initialize()
 	WiFi.setAutoReconnect(true);
 	WiFi.mode(WIFI_AP_STA);
 
-	os_timer_setfn(&wifiConnectTimer, __***REMOVED***iot_wifi_connect_timer_callback, this);
+	os_timer_setfn(&wifiConnectTimer, __coogleiot_wifi_connect_timer_callback, this);
 
 	connect();
 }

@@ -14,7 +14,7 @@
 #endif
 
 #ifndef DEBUG_HOSTNAME
-#define DEBUG_HOSTNAME "***REMOVED***-light"
+#define DEBUG_HOSTNAME "coogle-light"
 #endif
 
 struct app_config {

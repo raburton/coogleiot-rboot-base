@@ -97,7 +97,7 @@ void CoogleIOT_NTP::loop()
 
 }
 
-extern "C" void __***REMOVED***iot_ntp_connect_timer_callback(void *self)
+extern "C" void __coogleiot_ntp_connect_timer_callback(void *self)
 {
 	CoogleIOT_NTP *obj = static_cast<CoogleIOT_NTP *>(self);
 	obj->connectTimerTick = true;
@@ -108,7 +108,7 @@ bool CoogleIOT_NTP::initialize()
 	if(logger)
 		logger->info("Initializing NTP");
 
-	os_timer_setfn(&connectTimer, __***REMOVED***iot_ntp_connect_timer_callback, this);
+	os_timer_setfn(&connectTimer, __coogleiot_ntp_connect_timer_callback, this);
 
 	if(WiFiManager) {
 		if(WiFiManager->connected()) {

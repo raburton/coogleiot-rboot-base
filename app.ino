@@ -54,8 +54,8 @@ void setupWiFi()
 {
     WiFiManager = new CoogleIOT_Wifi;
     WiFiManager->setLogger(_ciot_log);
-    WiFiManager->setRemoteAPName("***REMOVED***");
-    WiFiManager->setRemoteAPPassword("***REMOVED***");
+    WiFiManager->setRemoteAPName("SSID");
+    WiFiManager->setRemoteAPPassword("PASS");
 
     WiFiManager->initialize();
 }
