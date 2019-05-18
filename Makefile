@@ -1,3 +1,5 @@
+include config.mk
+
 FLASH_DEF = 4M1M
 BOARD = generic
 UPLOAD_SPEED = 115200
@@ -15,11 +17,15 @@ BOOT_LOADER = ../rboot/firmware/rboot.bin
 ARDUINO_LIBS = $(HOME)/Arduino/libraries
 
 # A list of things we should end up having as defines within the code base
-APP_DEFINES = #COOGLEIOT_WITH_REMOTEDEBUG \
-			  COOGLEIOT_REMOTEDEBUG_INSTANCE_NAME=Debug 
-			  
-CPP_EXTRA := $(CPP_EXTRA) $(addprefix -D, $(APP_DEFINES))
-C_EXTRA := $(C_EXTRA) $(addprefix -D, $(APP_DEFINES))
+APP_DEFINES := MQTT_MAX_PACKET_SIZE=512 \
+			   ESP8266 \
+			   FASTLED_ESP8266_NODEMCU_PIN_ORDER \
+			   $(APP_DEFINES) \
+			   #COOGLEIOT_WITH_REMOTEDEBUG \
+			   COOGLEIOT_REMOTEDEBUG_INSTANCE_NAME=Debug 
+			
+CPP_EXTRA := $(addprefix -D, $(APP_DEFINES)) -ffunction-sections $(CPP_EXTRA)
+C_EXTRA :=  $(addprefix -D, $(APP_DEFINES)) -ffunction-sections $(C_EXTRA)
 
 include makeEspArduino.mk
 

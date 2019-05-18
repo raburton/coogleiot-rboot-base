@@ -1,3 +1,24 @@
+/*
+  +----------------------------------------------------------------------+
+  | CoogleIOT for ESP8266                                                |
+  +----------------------------------------------------------------------+
+  | Copyright (c) 2017-2019 John Coggeshall                              |
+  +----------------------------------------------------------------------+
+  | Licensed under the Apache License, Version 2.0 (the "License");      |
+  | you may not use this file except in compliance with the License. You |
+  | may obtain a copy of the License at:                                 |
+  |                                                                      |
+  | http://www.apache.org/licenses/LICENSE-2.0                           |
+  |                                                                      |
+  | Unless required by applicable law or agreed to in writing, software  |
+  | distributed under the License is distributed on an "AS IS" BASIS,    |
+  | WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or      |
+  | implied. See the License for the specific language governing         |
+  | permissions and limitations under the License.                       |
+  +----------------------------------------------------------------------+
+  | Authors: John Coggeshall <john@thissmarthouse.com>                   |
+  +----------------------------------------------------------------------+
+*/
 #include "CoogleIOT_Wifi.h"
 
 CoogleIOT_Wifi& CoogleIOT_Wifi::setLogger(CoogleIOT_Logger *_logger)
@@ -109,6 +130,18 @@ CoogleIOT_Wifi& CoogleIOT_Wifi::setLocalAPPassword(String &pass)
 	return setLocalAPPassword(pass.c_str());
 }
 
+CoogleIOT_Wifi& CoogleIOT_Wifi::setHostname(String &host)
+{
+	return setHostname(host.c_str());
+}
+
+CoogleIOT_Wifi& CoogleIOT_Wifi::setHostname(const char *host)
+{
+	memset(&hostname[0], NULL, 64);
+	memcpy(&hostname[0], host, (strlen(host) > 63) ? 63 : strlen(host));
+	return *this;
+}
+
 CoogleIOT_Wifi& CoogleIOT_Wifi::setLocalAPPassword(const char *pass)
 {
 	memset(&localAPPassword[0], NULL, 65);
@@ -194,6 +227,15 @@ bool CoogleIOT_Wifi::initialize()
 {
 	if(logger)
 		logger->info("Initializing WiFiManager");
+
+	if(strlen(hostname) <= 0) {
+		char tmp[17];
+		sprintf(tmp, "coogleiot-%06x", ESP.getChipId());
+		setHostname(tmp);
+
+		if(logger)
+			logger->logPrintf(WARNING, "Host name not provided, set automatically to '%s'", hostname);
+	}
 
 	WiFi.disconnect();
 	WiFi.setAutoConnect(false);

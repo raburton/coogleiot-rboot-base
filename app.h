@@ -1,21 +1,54 @@
+/*
+  +----------------------------------------------------------------------+
+  | Coogle IOT Skeleton                                                  |
+  +----------------------------------------------------------------------+
+  | Copyright (c) 2017-2019 John Coggeshall                              |
+  +----------------------------------------------------------------------+
+  | Licensed under the Apache License, Version 2.0 (the "License");      |
+  | you may not use this file except in compliance with the License. You |
+  | may obtain a copy of the License at:                                 |
+  |                                                                      |
+  | http://www.apache.org/licenses/LICENSE-2.0                           |
+  |                                                                      |
+  | Unless required by applicable law or agreed to in writing, software  |
+  | distributed under the License is distributed on an "AS IS" BASIS,    |
+  | WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or      |
+  | implied. See the License for the specific language governing         |
+  | permissions and limitations under the License.                       |
+  +----------------------------------------------------------------------+
+  | Authors: John Coggeshall <john@thissmarthouse.com>                   |
+  +----------------------------------------------------------------------+
+*/
 #ifndef __APP_H_
 #define __APP_H_
 
 #include "buildinfo.h"
-#include <rboot.h>
+#include "rboot.h"
 #include <rboot-api.h>
 #include "CoogleIOT_Logger.h"
 #include "CoogleIOT_Wifi.h"
 #include "CoogleIOT_NTP.h"
+#include "CoogleIOT_MQTT.h"
+#include "CoogleIOT_OTA.h"
 #include "logger.h"
+#include <PubSubClient.h>
 
 #ifndef SERIAL_BAUD
 #define SERIAL_BAUD 115200
 #endif
 
 #ifndef DEBUG_HOSTNAME
-#define DEBUG_HOSTNAME "coogle-light"
+#define DEBUG_HOSTNAME "skeleton"
 #endif
+
+#ifndef APP_NAME
+#define APP_NAME "Skeleton"
+#endif
+
+#define ARRAY_SIZE(A) (sizeof(A) / sizeof((A)[0]))
+
+#define STRINGIZE(x) #x
+#define STRINGIZE_VALUE_OF(x) STRINGIZE(x)
 
 struct app_config {
 	char ssid[33];
@@ -27,9 +60,33 @@ struct app_config {
 class CoogleIOT_Logger;
 class CoogleIOT_Wifi;
 class CoogleIOT_NTP;
+class CoogleIOT_MQTT;
+class CoogleIOT_OTA;
 
-CoogleIOT_Logger *_ciot_log;
-CoogleIOT_Wifi *WiFiManager;
-CoogleIOT_NTP *NTPManager;
+CoogleIOT_Logger *_ciot_log = NULL;
+CoogleIOT_Wifi *WiFiManager = NULL;
+CoogleIOT_NTP *NTPManager = NULL;
+CoogleIOT_MQTT *mqttManager = NULL;
+CoogleIOT_OTA *otaManager = NULL;
+
+PubSubClient *mqtt = NULL;
+
+void onMQTTConnect();
+void onMQTTCommand(const char *, byte *, unsigned int);
+void publishCurrentState();
+void logSetupInfo();
+
+void onNTPReady();
+void onNewFirmware();
+
+void setupSerial();
+void setupMQTT();
+void setupNTP();
+void setupLogging();
+void setupWiFi();
+void setupOTA();
+
+void setup();
+void loop();
 
 #endif
